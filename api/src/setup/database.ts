@@ -26,10 +26,9 @@ function connectWithRetry() {
       .then(() => {
         console.log('MongoDB is connected');
       })
-      .catch((e: Error) => {
+      .catch(_ => {
         console.log('MongoDB connection unsuccessful, retry after 5 seconds.');
         setTimeout(connectWithRetry, 5000);
-        console.log(e);
       });
 }
 
