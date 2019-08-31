@@ -22,16 +22,14 @@ function connectWithRetry() {
   console.log('MongoDB connection with retry');
   mongoUri &&
     mongoose
-      .connect(
-        mongoUri,
-        options
-      )
+      .connect(mongoUri, options)
       .then(() => {
         console.log('MongoDB is connected');
       })
-      .catch(_ => {
+      .catch((e: Error) => {
         console.log('MongoDB connection unsuccessful, retry after 5 seconds.');
         setTimeout(connectWithRetry, 5000);
+        console.log(e);
       });
 }
 

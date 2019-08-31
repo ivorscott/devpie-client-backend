@@ -43,7 +43,7 @@
     "@types/jsonwebtoken": "^8.3.0",
     "@types/lodash": "^4.14.118",
     "@types/mongoose": "^5.3.2",
-    "@types/node": "^10.14.12",
+    "@types/node": "^10.14.17",
     "@types/superagent": "^3.8.4",
     "@types/validator": "^9.4.3",
     "babel-core": "^6.26.3",

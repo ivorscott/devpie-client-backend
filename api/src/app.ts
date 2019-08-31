@@ -1,4 +1,4 @@
-import './setup/env';
+import './setup/secrets';
 import './setup/database';
 import cors from 'cors';
 import express from 'express';

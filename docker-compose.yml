@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.4"
 services:
   api:
     build:
@@ -22,8 +22,9 @@ services:
     volumes:
       - ./api:/api/app
       - /api/app/node_modules
+
   mongo:
-    image: mongo
+    image: mongo:3.6.13
     restart: always
     ports:
       - 27017:27017
