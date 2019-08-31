@@ -22,10 +22,7 @@ function connectWithRetry() {
   console.log('MongoDB connection with retry');
   mongoUri &&
     mongoose
-      .connect(
-        mongoUri,
-        options
-      )
+      .connect(mongoUri, options)
       .then(() => {
         console.log('MongoDB is connected');
       })

@@ -3,7 +3,7 @@ include .env
 
 install:
 	@echo "\n[ installing api dependencies ]"
-	@docker-compose run --rm api npm install
+	@docker-compose run -u root --rm api npm install
 	@echo "\n"
 
 rm:
@@ -33,11 +33,11 @@ run:
 
 exec: 
 	@echo "\n[ executing $(cmd) in api container ]"
-	docker-compose exec api $(cmd)
+	docker-compose exec -u root api $(cmd)
 
 api:
 	@echo "\n[ starting up api ]"
-	@docker-compose up --build api
+	@docker-compose up
 	@echo "\n"
 .PHONY: api
 
