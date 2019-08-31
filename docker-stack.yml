@@ -1,0 +1,38 @@
+version: "3.7"
+services:
+  api:
+    image: devpies/client-api:prod
+    networks:
+      - traefik-public
+    secrets:
+      - jwt_secret
+      - sendgrid_api_key
+    environment:
+      MONGODB_URI: mongodb://dpie2020:##dpie2020##@ds237770.mlab.com:37770/client
+      JWT_SECRET: /run/secrets/jwt_secret
+      SENDGRID_API_KEY: /run/secrets/sendgrid_api_key
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:api.devpie.io
+        - traefik.enable=true
+        - traefik.port=4000
+        - traefik.tags=traefik-public
+        - traefik.docker.network=traefik-public
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+
+networks:
+  traefik-public:
+    external: true
+
+secrets:
+  jwt_secret:
+    external: true
+  sendgrid_api_key:
+    external: true

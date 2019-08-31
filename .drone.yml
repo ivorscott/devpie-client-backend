@@ -1,0 +1,53 @@
+kind: pipeline
+name: Audit, Build, Publish and Deploy
+
+steps:
+  - name: Audit
+    image: docker:dind
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+    commands:
+      - >
+        docker build --target test 
+        --file="./api/Dockerfile"
+        --tag devpies/client-api:test ./api
+
+  - name: Build & Publish
+    image: docker:dind
+    environment:
+      BACKEND: https://api.devpie.io/api/v1
+      FRONTEND: https://client.devpie.io
+      API_NAMESPACE: /api/v1
+      DOCKER_USER:
+        from_secret: registry_user
+      DOCKER_PASS:
+        from_secret: registry_pass
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+    commands:
+      - docker login -u $DOCKER_USER  -p $DOCKER_PASS
+      - >
+        docker build --target prod --file="./api/Dockerfile"
+        --build-arg backend=$BACKEND
+        --build-arg frontend=$FRONTEND
+        --build-arg api_namespace=$API_NAMESPACE
+        --tag devpies/client-api:prod ./api
+      - docker push devpies/client-api:prod
+
+  - name: Redeploy
+    image: plugins/webhook
+    settings:
+      urls:
+
+volumes:
+  - name: dockersock
+    host:
+      path: /var/run/docker.sock
+
+trigger:
+  branch:
+    - master
+  event:
+    - push

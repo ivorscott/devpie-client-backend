@@ -1,0 +1,40 @@
+version: "3.7"
+services:
+  api:
+    build:
+      context: ./api
+      target: dev
+    secrets:
+      - jwt_secret_local
+      - sendgrid_api_key
+    environment:
+      MONGODB_URI: $MONGODB_URI
+      CLIENT_PORT: 3000
+      API_NAMESPACE: $API_NAMESPACE
+      REACT_APP_BACKEND: $REACT_APP_LOCAL_BACKEND
+      REACT_APP_FRONTEND: $REACT_APP_LOCAL_FRONTEND
+      JWT_SECRET: /run/secrets/jwt_secret_local
+      SENDGRID_API_KEY: /run/secrets/sendgrid_api_key
+    restart: always
+    ports:
+      - 4000:4000
+      - 9229:9229
+    volumes:
+      - ./api:/api/app
+      - /api/app/node_modules
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+
+volumes:
+  mongodb:
+
+secrets:
+  jwt_secret_local:
+    file: ./secrets/jwt_secret_local
+  sendgrid_api_key:
+    file: ./secrets/sendgrid_api_key
