@@ -39,7 +39,7 @@ steps:
   - name: Redeploy
     image: plugins/webhook
     settings:
-      urls:
+      urls: https://manage.devpie.io/api/webhooks/8ef827c1-459d-413e-b565-b2d4108b2a36
 
 volumes:
   - name: dockersock
