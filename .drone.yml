@@ -13,8 +13,17 @@ steps:
         --file="./api/Dockerfile"
         --tag devpies/client-api:test ./api
 
+  - name: Github Release
+    image: devpies/github-release-drone:1.0.0
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+
   - name: Build & Publish
-    image: docker:dind
+    image: docker:git
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
     environment:
       BACKEND: https://api.devpie.io/api/v1
       FRONTEND: https://client.devpie.io
@@ -23,9 +32,6 @@ steps:
         from_secret: registry_user
       DOCKER_PASS:
         from_secret: registry_pass
-    volumes:
-      - name: dockersock
-        path: /var/run/docker.sock
     commands:
       - docker login -u $DOCKER_USER  -p $DOCKER_PASS
       - >
@@ -33,19 +39,22 @@ steps:
         --build-arg backend=$BACKEND
         --build-arg frontend=$FRONTEND
         --build-arg api_namespace=$API_NAMESPACE
-        --tag devpies/client-api:prod ./api
-      - docker push devpies/client-api:prod
-
-  - name: Github Release
-    image: devpies/github-release-drone:1.0.0
-    environment:
-      GITHUB_TOKEN:
-        from_secret: github_token
+        --tag devpies/client-api:$(git describe --tags --abbrev=0 | tr -d "v") ./api
+      - docker push devpies/client-api:$(git describe --tags --abbrev=0 | tr -d "v")
 
   - name: Redeploy
-    image: plugins/webhook
-    settings:
-      urls: https://manage.devpie.io/api/webhooks/8ef827c1-459d-413e-b565-b2d4108b2a36
+    image: docker:git
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+    environment:
+      PORTAINER_WEBHOOK:
+        from_secret: portainer_webhook
+    commands:
+      - >
+        docker run --rm
+        -e PLUGIN_URLS=$PORTAINER_WEBHOOK?tag=$(git describe --tags --abbrev=0 | tr -d "v")
+        plugins/webhook
 
 volumes:
   - name: dockersock
