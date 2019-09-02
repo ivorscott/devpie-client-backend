@@ -47,12 +47,11 @@ api-d:
 	@echo "\n"
 
 test: 
-	docker build --target test --file="./client/Dockerfile" \
-		--tag devpies/client-api:test ./client
+	docker build --target test --tag devpies/client-api:test ./client
 
 build: 
 	@echo "\n[ build api production image ]"
-	docker build --target prod --file="./api/Dockerfile" \
+	docker build --target prod \
 	--build-arg backend=${REACT_APP_BACKEND} \
 	--build-arg frontend=${REACT_APP_FRONTEND} \
 	--build-arg api_namespace=${API_NAMESPACE} \
