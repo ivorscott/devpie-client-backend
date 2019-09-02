@@ -37,11 +37,10 @@ steps:
       - docker push devpies/client-api:prod
 
   - name: semantic-release
-  image: devpies/github-release-drone:1.0.0
-  environment:
-    GITHUB_TOKEN:
-      from_secret: github_token
-
+    image: devpies/github-release-drone:1.0.0
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
 
   - name: Redeploy
     image: plugins/webhook
