@@ -8,10 +8,7 @@ steps:
       - name: dockersock
         path: /var/run/docker.sock
     commands:
-      - >
-        docker build --target test 
-        --file="./api/Dockerfile"
-        --tag devpies/client-api:test ./api
+      - docker build --target test --tag devpies/client-api:test ./api
 
   - name: Github Release
     image: devpies/github-release-drone:1.0.0
@@ -35,7 +32,7 @@ steps:
     commands:
       - docker login -u $DOCKER_USER  -p $DOCKER_PASS
       - >
-        docker build --target prod --file="./api/Dockerfile"
+        docker build --target prod
         --build-arg backend=$BACKEND
         --build-arg frontend=$FRONTEND
         --build-arg api_namespace=$API_NAMESPACE
